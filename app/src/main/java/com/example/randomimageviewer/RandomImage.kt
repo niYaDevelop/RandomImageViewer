@@ -1,6 +1,9 @@
 package com.example.randomimageviewer
 
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
-
-data class RandomImage(val id:Int, val image:Painter, val linkURL:String)
+data class RandomImage(val linkURL: String, var initialLiked: Boolean = false){
+    var isLiked: Boolean by mutableStateOf(initialLiked)
+}

@@ -14,7 +14,7 @@ fun NavigationGraph(navController: NavHostController, modifier : Modifier) {
         composable(BottomNavItem.Search.screen_route) {
             SearchScreen()
         }
-        composable(BottomNavItem.Favourite.screen_route) {
+        composable(BottomNavItem.Favourites.screen_route) {
             FavouriteScreen()
         }
     }

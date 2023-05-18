@@ -8,5 +8,5 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class BottomNavItem(var title:String, var icon: ImageVector, var screen_route:String){
 
     object Search : BottomNavItem("Search", Icons.Filled.Search,"home")
-    object Favourite: BottomNavItem("Favourite",Icons.Filled.Favorite,"favourite")
+    object Favourites: BottomNavItem("Favourites",Icons.Filled.Favorite,"favourites")
 }

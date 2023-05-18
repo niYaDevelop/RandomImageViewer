@@ -1,8 +1,10 @@
 package com.example.randomimageviewer.ui.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,27 +12,41 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.randomimageviewer.R
+import com.example.randomimageviewer.RandomImage
+import com.example.randomimageviewer.ViewModelRI
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SearchScreen() {
+fun SearchScreen(viewModelRI: ViewModelRI = viewModel()) {
+    val uiState by viewModelRI.uiState.collectAsState()
+
     val pagerState = rememberPagerState()
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -38,15 +54,12 @@ fun SearchScreen() {
     ) {
         HorizontalPager(
             state = pagerState,
-            pageCount = Int.MAX_VALUE,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .wrapContentHeight(),
+            pageCount = viewModelRI.randomList.size,
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
         ) { page ->
             ImageCard(
-                painter = painterResource(R.drawable.astronaut),
-                isLiked = false,
+                randomImage = viewModelRI.randomList.get(page),
+                onLiked = {like:Boolean -> viewModelRI.likedImage(viewModelRI.randomList.get(page), like)},
                 Modifier
                     .padding(8.dp)
             )
@@ -56,29 +69,74 @@ fun SearchScreen() {
 
 @Composable
 fun ImageCard(
-    painter:Painter,
-    isLiked:Boolean,
+    randomImage: RandomImage,
+    onLiked: (Boolean) -> Unit,
     modifier:Modifier = Modifier
 ){
     Surface(
         shape = MaterialTheme.shapes.large,
-        modifier =  modifier,
-        color = MaterialTheme.colorScheme.onSurface
+        modifier =  modifier.aspectRatio(1f),
+        color = MaterialTheme.colorScheme.onSurface,
+        shadowElevation = 8.dp
     ){
-        Box(){
+        Box (modifier = Modifier.fillMaxSize(),){
             var scale by remember{ mutableStateOf(ContentScale.Crop) }
-            Image(
-                painter = painter,
+            AsyncImage(
+                model = randomImage.linkURL,
                 contentDescription = null,
                 contentScale = scale,
+                placeholder = painterResource(id = R.drawable.rand_img_placeholder),
+                error = painterResource(id = R.drawable.rand_img_placeholder_error),
                 modifier = Modifier
-                    .aspectRatio(1f)
                     .clickable {
                         scale = when (scale) {
                             ContentScale.Crop -> ContentScale.Fit
                             else -> ContentScale.Crop
-                        }}
+                        }
+                    }
+                    .fillMaxSize()
             )
+            FavouriteButton(randomImage.isLiked, onLiked, Modifier.align(Alignment.BottomStart))
         }
     }
+}
+
+@Composable
+fun FavouriteButton(
+    isLiked: Boolean,
+    onLiked: (Boolean)-> Unit,
+    modifier: Modifier = Modifier
+) {
+    var liked by remember { mutableStateOf(false) }
+    val interactionSource = MutableInteractionSource()
+    val coroutineScope = rememberCoroutineScope()
+    val scale = remember { Animatable(1f) }
+
+    Icon(
+        imageVector = if(isLiked){Icons.Filled.Favorite}
+                    else{Icons.Default.FavoriteBorder},
+        contentDescription = null,
+        tint = if (isLiked) Color.Red else Color.LightGray,
+        modifier = modifier
+            .padding(8.dp)
+            .scale(scale = scale.value)
+            .size(size = 48.dp)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+//                liked = !liked
+                onLiked(!isLiked)
+                coroutineScope.launch {
+                    scale.animateTo(
+                        1.3f,
+                        animationSpec = tween(30),
+                    )
+                    scale.animateTo(
+                        1f,
+                        animationSpec = tween(30),
+                    )
+                }
+            }
+    )
 }

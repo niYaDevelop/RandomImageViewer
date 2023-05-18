@@ -14,7 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
         BottomNavItem.Search,
-        BottomNavItem.Favourite
+        BottomNavItem.Favourites
     )
     BottomNavigation(
     ) {
