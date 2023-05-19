@@ -1,47 +1,61 @@
 package com.example.randomimageviewer
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class ViewModelRI: ViewModel() {
     private val _uiState = MutableStateFlow(UIStateRI())
     val uiState: StateFlow<UIStateRI> = _uiState.asStateFlow()
-    val modelRI = ModelRI()
-
-    var favList: MutableList<RandomImage> = mutableStateListOf<RandomImage>()
-    var randomList: MutableList<RandomImage> = mutableStateListOf<RandomImage>()
+    private val modelRI = ModelRI()
 
     init{
-        randomList = modelRI.getRandomList().toMutableStateList()
-        favList = modelRI.getFavList().toMutableStateList()
-    }
-
-    fun likedImage(randomImage: RandomImage, like: Boolean){
-
-
-        if(randomList.contains(randomImage)){
-            val index = randomList.indexOf(randomImage)
-            val isLiked = randomList[index].isLiked
-            randomList[index].isLiked = !isLiked
-            if(!isLiked) favList.add(randomImage)
-            else favList.remove(favList.find{it.linkURL == randomImage.linkURL})
+        _uiState.update { currentState ->
+            currentState.copy(
+                randomList = modelRI.getRandomList(),
+                favList = modelRI.getFavList()
+            )
         }
-
-
     }
 
+    fun likedImage(randomImage: RandomImage){
+
+        val isLiked = !randomImage.isLiked
+        randomImage.isLiked = isLiked
+        if(isLiked){
+            _uiState.update { currentState ->
+                currentState.copy(
+                    favList = currentState.favList.plus(randomImage)
+                )
+            }
+        }
+        else{
+            _uiState.update { currentState ->
+                currentState.copy(
+                    favList = currentState.favList.minus(randomImage)
+                )
+            }
+            if(_uiState.value.favList.isEmpty()) closeFavImage()
+        }
+    }
 
     fun openFavImage(randomImage: RandomImage){
 
+        _uiState.update { currentState ->
+            currentState.copy(
+                favImageToOpen = randomImage,
+                openFavImageDialog = true
+            )
+        }
     }
 
     fun closeFavImage(){
-
+        _uiState.update { currentState ->
+            currentState.copy(
+                openFavImageDialog = false
+            )
+        }
     }
-
-
 }

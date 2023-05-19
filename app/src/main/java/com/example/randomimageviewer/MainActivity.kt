@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.randomimageviewer.navigation.BottomNavigationBar
 import com.example.randomimageviewer.navigation.NavigationGraph
@@ -29,10 +30,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenView(){
     val navController = rememberNavController()
+    val viewModelRI: ViewModelRI = viewModel()
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->
-        NavigationGraph(navController = navController, Modifier.padding(innerPadding))
+        NavigationGraph(navController = navController, viewModelRI, Modifier.padding(innerPadding))
     }
 }
 

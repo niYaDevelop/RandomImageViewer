@@ -1,12 +1,8 @@
 package com.example.randomimageviewer
 
-import androidx.compose.runtime.mutableStateListOf
-
 data class UIStateRI(
-//    var favList: MutableList<RandomImage> = mutableStateListOf<RandomImage>(),
-//    var randomList: MutableList<RandomImage> = mutableStateListOf<RandomImage>(),
-    var openFavImageDialog: Boolean = false,
-    var favImageToOpen: RandomImage? = null,
-
-
+    val favList: List<RandomImage> = listOf<RandomImage>(),
+    val randomList: List<RandomImage> = listOf<RandomImage>(),
+    val openFavImageDialog: Boolean = false,
+    val favImageToOpen: RandomImage? = null,
     )

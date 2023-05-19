@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -46,31 +47,45 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(viewModelRI: ViewModelRI = viewModel()) {
     val uiState by viewModelRI.uiState.collectAsState()
-
     val pagerState = rememberPagerState()
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center
     ) {
-        HorizontalPager(
-            state = pagerState,
-            pageCount = viewModelRI.randomList.size,
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
-        ) { page ->
-            ImageCard(
-                randomImage = viewModelRI.randomList.get(page),
-                onLiked = {like:Boolean -> viewModelRI.likedImage(viewModelRI.randomList.get(page), like)},
-                Modifier
-                    .padding(8.dp)
-            )
-        }
+        ImagePager(
+            pagerState = pagerState,
+            contentList = uiState.randomList,
+            onLiked = {randomImage -> viewModelRI.likedImage(randomImage)}
+        )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ImagePager(
+    pagerState: PagerState,
+    contentList: List<RandomImage>,
+    onLiked: (RandomImage) -> Unit
+    ){
+    HorizontalPager(
+        state = pagerState,
+        pageCount = contentList.size,
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+    ) { page ->
+        ImageCard(
+            randomImage = contentList[page],
+            onLiked = {onLiked(contentList[page])},
+            Modifier
+                .padding(8.dp)
+        )
     }
 }
 
 @Composable
 fun ImageCard(
     randomImage: RandomImage,
-    onLiked: (Boolean) -> Unit,
+    onLiked: () -> Unit,
     modifier:Modifier = Modifier
 ){
     Surface(
@@ -104,10 +119,9 @@ fun ImageCard(
 @Composable
 fun FavouriteButton(
     isLiked: Boolean,
-    onLiked: (Boolean)-> Unit,
+    onLiked: ()-> Unit,
     modifier: Modifier = Modifier
 ) {
-    var liked by remember { mutableStateOf(false) }
     val interactionSource = MutableInteractionSource()
     val coroutineScope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
@@ -125,8 +139,7 @@ fun FavouriteButton(
                 interactionSource = interactionSource,
                 indication = null
             ) {
-//                liked = !liked
-                onLiked(!isLiked)
+                onLiked()
                 coroutineScope.launch {
                     scale.animateTo(
                         1.3f,
