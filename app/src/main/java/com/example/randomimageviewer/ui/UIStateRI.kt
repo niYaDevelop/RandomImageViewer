@@ -1,4 +1,6 @@
-package com.example.randomimageviewer
+package com.example.randomimageviewer.ui
+
+import com.example.randomimageviewer.data.RandomImage
 
 data class UIStateRI(
     val favList: List<RandomImage> = listOf<RandomImage>(),

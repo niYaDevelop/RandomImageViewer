@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.randomimageviewer.R
-import com.example.randomimageviewer.RandomImage
+import com.example.randomimageviewer.data.RandomImage
 import com.example.randomimageviewer.ViewModelRI
 import kotlinx.coroutines.launch
 

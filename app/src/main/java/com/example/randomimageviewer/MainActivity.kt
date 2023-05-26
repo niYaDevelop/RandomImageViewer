@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreenView(){
     val navController = rememberNavController()
-    val viewModelRI: ViewModelRI = viewModel()
+    val viewModelRI: ViewModelRI = viewModel(factory = ViewModelRI.Factory)
     Scaffold(
         bottomBar = { BottomNavigationBar(navController = navController) }
     ) { innerPadding ->

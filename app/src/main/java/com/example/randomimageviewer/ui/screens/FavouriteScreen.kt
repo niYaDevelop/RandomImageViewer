@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.randomimageviewer.R
-import com.example.randomimageviewer.RandomImage
+import com.example.randomimageviewer.data.RandomImage
 import com.example.randomimageviewer.ViewModelRI
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -54,7 +54,7 @@ fun FavouriteScreen(viewModelRI: ViewModelRI = viewModel()) {
 }
 
 @Composable
-fun FavCard(randomImage:RandomImage, onClick :()-> Unit){
+fun FavCard(randomImage: RandomImage, onClick :()-> Unit){
     Card(
         elevation = 4.dp
     ) {
