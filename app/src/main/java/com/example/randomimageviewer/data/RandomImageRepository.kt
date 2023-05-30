@@ -4,21 +4,21 @@ import com.example.randomimageviewer.network.RandomImageApiService
 
 
 interface RandomImageRepository {
-    suspend fun getRandomImage(): List<RandomImage>
-    suspend fun loadRandomImageList(size: Int): List<RandomImage>
+    suspend fun getRandomImage(): MutableList<RandomImage>
+    suspend fun loadRandomImageList(size: Int): MutableList<RandomImage>
 }
 
 class NetworkRandomImageRepository(
     private val randomImageApiService: RandomImageApiService
 ) : RandomImageRepository {
 
-    override suspend fun getRandomImage(): List<RandomImage> = randomImageApiService.getImage()
+    override suspend fun getRandomImage(): MutableList<RandomImage> = randomImageApiService.getImage()
 
-    override suspend fun loadRandomImageList(size: Int): List<RandomImage> {
-        var randomList = listOf<RandomImage>()
+    override suspend fun loadRandomImageList(size: Int): MutableList<RandomImage> {
+        var randomList = mutableListOf<RandomImage>()
         for(i in 1..size){
             val l = getRandomImage()
-            randomList = randomList.plus(l)
+            randomList.addAll(l)
         }
         return randomList
     }

@@ -4,5 +4,5 @@ import retrofit2.http.GET
 
 interface RandomImageApiService {
     @GET("v1/images/search")
-    suspend fun getImage(): List<RandomImage>
+    suspend fun getImage(): MutableList<RandomImage>
 }

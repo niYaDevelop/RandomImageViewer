@@ -46,7 +46,7 @@ fun FavouriteScreen(viewModelRI: ViewModelRI = viewModel()) {
     if(uiState.openFavImageDialog) {
         OpenAlert(
             uiState.favImageToOpen!!,
-            onLiked = {randomImage -> viewModelRI.likedImage(randomImage) },
+            onLiked = { randomImage -> viewModelRI.likedImage(randomImage) },
             onDismiss = { viewModelRI.closeFavImage()},
             contentList = uiState.favList
         )
